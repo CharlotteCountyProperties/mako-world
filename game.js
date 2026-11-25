@@ -13,6 +13,10 @@
   var WATER_JUMP_VELOCITY = -400;
   var WATER_BOUNCE_VELOCITY = -540;
   var ENEMY_SPEED = 70;
+  var START_LIVES = 3;
+  var INVULN_MS = 1000;
+  var PLAYER_START_X = 80;
+  var PLAYER_START_Y = 340;
 
   var MAX_LEVEL = 10;
   var LEVEL_NAMES = {
@@ -1877,6 +1881,12 @@
       this.bossBar = null;
       this.ropeGfx = null;
       this.darkness = null;
+      this.lives = START_LIVES;
+      this.invulnUntil = 0;
+      this.touchLeft = false;
+      this.touchRight = false;
+      this.touchJump = false;
+      this.touchControlsOn = false;
 
       makeTextures(this);
       makeWorldTextures(this);
@@ -1926,7 +1936,7 @@
       this.physics.world.setBounds(0, 0, this.worldWidth, WORLD_HEIGHT);
       this.cameras.main.setBounds(0, 0, this.worldWidth, WORLD_HEIGHT);
 
-      this.player = this.physics.add.sprite(80, 340, "kid");
+      this.player = this.physics.add.sprite(PLAYER_START_X, PLAYER_START_Y, "kid");
       this.player.setCollideWorldBounds(true);
       this.player.setDepth(10);
       // The physics sprite stays invisible; a separate art image follows it so tilt and
@@ -1978,6 +1988,8 @@
       this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
       this.keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
       this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+      this.input.addPointer(2);
+      this.addTouchControls();
 
       this.add.text(16, 10, "Mako's World", {
         fontFamily: "sans-serif",
@@ -2007,6 +2019,14 @@
         fontFamily: "sans-serif",
         fontSize: "16px",
         color: "#ffffff",
+        stroke: "#1a1a22",
+        strokeThickness: 4
+      }).setScrollFactor(0).setDepth(20);
+
+      this.livesText = this.add.text(16, 76, "Lives: " + this.lives, {
+        fontFamily: "sans-serif",
+        fontSize: "16px",
+        color: "#ffe566",
         stroke: "#1a1a22",
         strokeThickness: 4
       }).setScrollFactor(0).setDepth(20);
@@ -2047,6 +2067,112 @@
           this.goToAdvance();
         }
       }, this);
+    }
+
+
+    wantsTouchControls() {
+      var coarse = false;
+      var fine = false;
+      try {
+        coarse = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+        fine = !!(window.matchMedia && window.matchMedia("(pointer: fine)").matches);
+      } catch (err) {
+        // ignore
+      }
+      var touch = !!(this.sys.game.device && this.sys.game.device.input && this.sys.game.device.input.touch);
+      return coarse || (touch && !fine);
+    }
+
+    addTouchControls() {
+      this.touchLeft = false;
+      this.touchRight = false;
+      this.touchJump = false;
+      this.touchControlsOn = this.wantsTouchControls();
+      if (typeof window.applyMakoLayout === "function") {
+        window.applyMakoLayout();
+        this.touchControlsOn = this.wantsTouchControls() || (document.getElementById("app") && document.getElementById("app").classList.contains("touch-play"));
+      }
+    }
+
+    updateLivesHud() {
+      if (this.livesText) {
+        this.livesText.setText("Lives: " + this.lives);
+      }
+    }
+
+    startInvulnFlash() {
+      var targets = [this.playerArt, this.dorsalFin, this.tailFin].filter(Boolean);
+      if (!targets.length) {
+        return;
+      }
+      this.tweens.killTweensOf(targets);
+      var scene = this;
+      this.tweens.add({
+        targets: targets,
+        alpha: 0.22,
+        duration: 90,
+        yoyo: true,
+        repeat: 10,
+        onComplete: function () {
+          var i;
+          for (i = 0; i < targets.length; i++) {
+            if (targets[i] && targets[i].active) {
+              targets[i].setAlpha(1);
+            }
+          }
+        }
+      });
+    }
+
+    respawnPlayer() {
+      if (!this.player || !this.player.body) {
+        return;
+      }
+      this.player.setVelocity(0, 0);
+      this.player.setAcceleration(0, 0);
+      this.player.setFlipX(false);
+      this.player.setPosition(PLAYER_START_X, PLAYER_START_Y);
+      this.form = null;
+      var startShark = this.isInWater(PLAYER_START_X, PLAYER_START_Y);
+      if (startShark) {
+        this.player.body.setSize(36, 22);
+        this.player.body.setOffset(14, 10);
+      } else {
+        this.player.body.setSize(22, 36);
+        this.player.body.setOffset(5, 10);
+      }
+      this.setForm(startShark ? "shark" : "kid", true);
+      this.player.setVelocity(0, 0);
+      this.cameras.main.centerOn(PLAYER_START_X, PLAYER_START_Y);
+      this.invulnUntil = this.time.now + INVULN_MS;
+      this.startInvulnFlash();
+    }
+
+    loseLife() {
+      if (this.won || this.completing || this.restarting) {
+        return;
+      }
+      if (this.time.now < this.invulnUntil) {
+        return;
+      }
+      this.lives -= 1;
+      this.updateLivesHud();
+      if (this.lives <= 0) {
+        this.restarting = true;
+        if (this.player) {
+          this.player.setVelocity(0, 0);
+        }
+        this.winShade.setVisible(true);
+        this.bannerText.setVisible(true);
+        this.bannerHint.setVisible(true);
+        this.bannerText.setText("Try again");
+        this.bannerHint.setText("The level starts over...");
+        this.time.delayedCall(1600, function () {
+          this.scene.restart({ level: this.level });
+        }, [], this);
+        return;
+      }
+      this.respawnPlayer();
     }
 
     onPlatformCollide(player, plat) {
@@ -2093,7 +2219,7 @@
       if (this.won || this.completing || this.restarting) {
         return;
       }
-      this.restartLevel();
+      this.loseLife();
     }
 
     fireCannons() {
@@ -2352,7 +2478,7 @@
         this.bossInvuln = now + 300;
         player.setVelocityY(-460);
       } else {
-        this.restartLevel();
+        this.loseLife();
       }
     }
 
@@ -2485,7 +2611,7 @@
       if (this.won || this.completing || this.restarting || !jelly.active) {
         return;
       }
-      this.restartLevel();
+      this.loseLife();
     }
 
     hitEnemy(player, enemy) {
@@ -2497,7 +2623,7 @@
         enemy.disableBody(true, true);
         player.setVelocityY(-280);
       } else {
-        this.restartLevel();
+        this.loseLife();
       }
     }
 
@@ -2777,18 +2903,19 @@
       }
 
       if (this.player.y > WORLD_HEIGHT + 20) {
-        this.restartLevel();
+        this.loseLife();
         return;
       }
 
       if (this.inLava()) {
-        this.restartLevel();
+        this.loseLife();
         return;
       }
 
-      var left = this.cursors.left.isDown || this.keyA.isDown;
-      var right = this.cursors.right.isDown || this.keyD.isDown;
-      var jump = this.cursors.up.isDown || this.keyW.isDown || this.keySpace.isDown;
+      var pad = window.__makoTouch || {};
+      var left = this.cursors.left.isDown || this.keyA.isDown || this.touchLeft || !!pad.left;
+      var right = this.cursors.right.isDown || this.keyD.isDown || this.touchRight || !!pad.right;
+      var jump = this.cursors.up.isDown || this.keyW.isDown || this.keySpace.isDown || this.touchJump || !!pad.jump;
       var onGround = this.player.body.blocked.down || this.player.body.touching.down;
       var moveSpeed = this.underwater ? WATER_MOVE_SPEED : MOVE_SPEED;
       var jumpVel = this.underwater ? WATER_JUMP_VELOCITY : JUMP_VELOCITY;
@@ -2840,4 +2967,23 @@
   };
 
   window.game = new Phaser.Game(config);
+  if (typeof window.applyMakoLayout === "function") {
+    var applyWhenReady = function () {
+      window.applyMakoLayout();
+    };
+    if (window.game && window.game.canvas) {
+      applyWhenReady();
+    } else if (window.game && window.game.events && typeof window.game.events.once === "function") {
+      window.game.events.once("ready", applyWhenReady);
+    }
+    if (window.game && window.game.scale && window.game.scale.on) {
+      window.game.scale.on("resize", function () {
+        // Layout already updated from window resize; this keeps FIT in sync after rotation.
+      });
+    }
+    window.addEventListener("resize", window.applyMakoLayout);
+    window.addEventListener("orientationchange", function () {
+      window.setTimeout(window.applyMakoLayout, 60);
+    });
+  }
 })();
