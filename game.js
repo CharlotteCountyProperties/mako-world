@@ -7,14 +7,15 @@
   var GAME_HEIGHT = 450;
   var GROUND_TOP = 418;
   var MOVE_SPEED = 210;
-  var JUMP_VELOCITY = -500;
+  var JUMP_VELOCITY = -520;
   var SPRING_VELOCITY = -840;
   var WATER_MOVE_SPEED = 170;
-  var WATER_JUMP_VELOCITY = -400;
+  var WATER_JUMP_VELOCITY = -420;
   var WATER_BOUNCE_VELOCITY = -540;
-  var ENEMY_SPEED = 70;
+  var ENEMY_SPEED = 45;
   var START_LIVES = 3;
-  var INVULN_MS = 1000;
+  var INVULN_MS = 2000;
+  var COYOTE_MS = 120;
   var PLAYER_START_X = 80;
   var PLAYER_START_Y = 340;
 
@@ -754,15 +755,15 @@
   }
 
   function buildLevel1(scene) {
-    addPlatform(scene, 0, GROUND_TOP, 500, 32, "ground");
+    addPlatform(scene, 0, GROUND_TOP, 560, 32, "ground");
     addSpring(scene, 390, GROUND_TOP - 12);
     addPlatform(scene, 620, GROUND_TOP - 150, 48, 150, "block");
-    addPlatform(scene, 920, GROUND_TOP, 480, 32, "ground");
+    addPlatform(scene, 840, GROUND_TOP, 620, 32, "ground");
     // Slow moving platform over the first pit, on the opening screen so the player can ride it
-    addMovingPlatform(scene, 720, 328, 112, 680, 820, 32);
+    addMovingPlatform(scene, 720, 328, 136, 660, 860, 22);
     addBramble(scene, 1120, GROUND_TOP - 20);
     addSpring(scene, 1320, GROUND_TOP - 12);
-    addPlatform(scene, 1760, GROUND_TOP, 200, 32, "ground");
+    addPlatform(scene, 1680, GROUND_TOP, 280, 32, "ground");
 
     var stairs = addStaircase(scene, 1960, 8, 56, 28, 420);
     scene.flag = scene.physics.add.staticSprite(
@@ -786,14 +787,14 @@
   }
 
   function buildLevel2(scene) {
-    addPlatform(scene, 0, GROUND_TOP, 420, 32, "ground");
+    addPlatform(scene, 0, GROUND_TOP, 500, 32, "ground");
     addSpring(scene, 330, GROUND_TOP - 12);
     addPlatform(scene, 560, GROUND_TOP - 170, 44, 170, "block");
-    addPlatform(scene, 980, GROUND_TOP, 360, 32, "ground");
+    addPlatform(scene, 860, GROUND_TOP, 460, 32, "ground");
     addBramble(scene, 1120, GROUND_TOP - 20);
     addSpring(scene, 1260, GROUND_TOP - 12);
-    addPlatform(scene, 1480, 250, 120, 20, "block");
-    addPlatform(scene, 1860, GROUND_TOP, 160, 32, "ground");
+    addPlatform(scene, 1460, 250, 160, 20, "block");
+    addPlatform(scene, 1800, GROUND_TOP, 220, 32, "ground");
 
     var startX = 2020;
     var stepW = 56;
@@ -804,10 +805,10 @@
       addPlatform(scene, startX + i * stepW, GROUND_TOP + 32 - h, stepW, h, "block");
     }
     var midTop = GROUND_TOP + 32 - 5 * stepRise;
-    addPlatform(scene, startX + 5 * stepW, midTop, 140, 24, "block");
-    addBramble(scene, startX + 5 * stepW + 70, midTop - 20);
-    var gapX = startX + 5 * stepW + 140;
-    var resumeX = gapX + 90;
+    addPlatform(scene, startX + 5 * stepW, midTop, 180, 24, "block");
+    addBramble(scene, startX + 5 * stepW + 90, midTop - 20);
+    var gapX = startX + 5 * stepW + 180;
+    var resumeX = gapX + 60;
     var baseH = 5 * stepRise;
     for (i = 0; i < 6; i++) {
       var h2 = baseH + (i + 1) * stepRise;
@@ -842,9 +843,9 @@
       scene.add.image(180 + k * 420, 340, "kelp").setScrollFactor(0.22).setAlpha(0.35).setDepth(1);
     }
 
-    addPlatform(scene, 0, GROUND_TOP, 640, 32, "sand");
-    addPlatform(scene, 1080, GROUND_TOP, 620, 32, "sand");
-    addPlatform(scene, 2300, GROUND_TOP, 900, 32, "sand");
+    addPlatform(scene, 0, GROUND_TOP, 720, 32, "sand");
+    addPlatform(scene, 980, GROUND_TOP, 720, 32, "sand");
+    addPlatform(scene, 2140, GROUND_TOP, 1060, 32, "sand");
 
     addSeaweed(scene, 140, GROUND_TOP);
     addSeaweed(scene, 300, GROUND_TOP);
@@ -1173,7 +1174,7 @@
       var H = 900;
       var cx = 800;
       var cy = 450;
-      var radii = [130, 150, 170, 190, 210, 230, 250];
+      var radii = [180, 205, 230, 255, 280, 310, 340];
       var row;
       var ri;
       for (ri = 0; ri < radii.length; ri++) {
@@ -1634,16 +1635,16 @@
   // ---------- Level 4: Beach (crumbling sand, crabs, tide pool) ----------
   function buildLevel4(scene) {
     scene.waterZones = [];
-    addGround(scene, 0, 700, "sand");
-    addWalker(scene, 480, GROUND_TOP - 16, "crab", 95, 30, 18, 5, 9);
+    addGround(scene, 0, 760, "sand");
+    addWalker(scene, 480, GROUND_TOP - 16, "crab", 62, 30, 18, 5, 9);
     addSpring(scene, 640, GROUND_TOP - 12);
-    addGround(scene, 830, 380, "sand");
-    addWalker(scene, 1050, GROUND_TOP - 16, "crab", 105, 30, 18, 5, 9);
-    addCrumble(scene, 1250, 360, 96);
-    addCrumble(scene, 1400, 330, 96);
-    addCrumble(scene, 1545, 360, 96);
-    addGround(scene, 1640, 960, "sand");
-    addWalker(scene, 1760, GROUND_TOP - 16, "crab", 110, 30, 18, 5, 9);
+    addGround(scene, 800, 430, "sand");
+    addWalker(scene, 1050, GROUND_TOP - 16, "crab", 68, 30, 18, 5, 9);
+    addCrumble(scene, 1250, 360, 120);
+    addCrumble(scene, 1400, 330, 120);
+    addCrumble(scene, 1540, 360, 120);
+    addGround(scene, 1600, 1000, "sand");
+    addWalker(scene, 1760, GROUND_TOP - 16, "crab", 72, 30, 18, 5, 9);
     // Tide pool: kid -> shark inside, shark -> kid on the far rock
     addWaterZone(scene, 1900, 250, 560, WORLD_HEIGHT - 250);
     addSeaweed(scene, 1990, GROUND_TOP);
@@ -1652,8 +1653,8 @@
     addBubblePlatform(scene, 2060, 330);
     addPlatform(scene, 2460, 330, 140, GROUND_TOP + 32 - 330, "rock");
     addGround(scene, 2600, 500, "sand");
-    addWalker(scene, 2820, GROUND_TOP - 16, "crab", 115, 30, 18, 5, 9);
-    addMovingPlatform(scene, 2900, 300, 96, 2860, 3020, 40);
+    addWalker(scene, 2820, GROUND_TOP - 16, "crab", 75, 30, 18, 5, 9);
+    addMovingPlatform(scene, 2900, 300, 120, 2860, 3040, 26);
     var stairs = addStaircase(scene, 3100, 5, 56, 28, 360);
     addFlag(scene, stairs.landingX + stairs.landingW - 80, stairs.landingTop);
     scene.worldWidth = stairs.landingX + stairs.landingW + 80;
@@ -1673,7 +1674,7 @@
     addPlatform(scene, 520, 300, 980, 20, "deck");
     scene.add.image(1010, 300, "mast").setOrigin(0.5, 1).setDepth(1);
     addBramble(scene, 820, 280);
-    addWalker(scene, 1180, 284, "crab", 100, 30, 18, 5, 9);
+    addWalker(scene, 1180, 284, "crab", 65, 30, 18, 5, 9);
     addCannon(scene, 1460, 284, -1);
     // Sea between the ships (shark form), with two rope swings above it
     addGround(scene, 1500, 800, "sand");
@@ -1683,14 +1684,14 @@
     addSeaweed(scene, 1620, GROUND_TOP);
     addSeaweed(scene, 2180, GROUND_TOP);
     addJelly(scene, 1900, 380, 50);
-    addSwing(scene, 1800, 40, 260, 0.9, 3400);
-    addSwing(scene, 2130, 40, 230, 0.8, 3000);
+    addSwing(scene, 1800, 40, 260, 0.75, 4200);
+    addSwing(scene, 2130, 40, 230, 0.65, 4000);
     addPlatform(scene, 2300, 320, 1000, GROUND_TOP + 32 - 320, "hull");
     addPlatform(scene, 2300, 300, 1000, 20, "deck");
     scene.add.image(2800, 300, "mast").setOrigin(0.5, 1).setDepth(1);
-    addWalker(scene, 2560, 284, "crab", 110, 30, 18, 5, 9);
+    addWalker(scene, 2560, 284, "crab", 72, 30, 18, 5, 9);
     addBramble(scene, 3000, 280);
-    addMovingPlatform(scene, 2800, 190, 96, 2700, 2950, 45);
+    addMovingPlatform(scene, 2800, 190, 120, 2700, 2970, 30);
     addCannon(scene, 3260, 284, -1);
     addGround(scene, 3300, 600, "deck");
     addFlag(scene, 3800, GROUND_TOP);
@@ -1706,20 +1707,20 @@
     scene.waterZones = [];
     addGround(scene, 0, 600, "cliff");
     addBramble(scene, 420, GROUND_TOP - 20);
-    addWind(scene, 600, 720, 70);
-    addPlatform(scene, 640, 340, 110, 24, "cloudplat");
-    addPlatform(scene, 830, 300, 110, 24, "cloudplat");
-    addPlatform(scene, 1020, 340, 110, 24, "cloudplat");
-    addPlatform(scene, 1210, 320, 110, 24, "cloudplat");
+    addWind(scene, 600, 720, 40);
+    addPlatform(scene, 640, 340, 150, 24, "cloudplat");
+    addPlatform(scene, 820, 300, 150, 24, "cloudplat");
+    addPlatform(scene, 1000, 340, 150, 24, "cloudplat");
+    addPlatform(scene, 1180, 320, 150, 24, "cloudplat");
     addGround(scene, 1320, 700, "cliff");
-    addWind(scene, 1320, 700, -60);
+    addWind(scene, 1320, 700, -35);
     addBramble(scene, 1700, GROUND_TOP - 20);
-    addFlyer(scene, 1550, 300, "bird", 120, 40, 1.4);
-    addFlyer(scene, 1850, 250, "bird", 140, 50, 1.1);
+    addFlyer(scene, 1550, 300, "bird", 140, 40, 0.9);
+    addFlyer(scene, 1850, 250, "bird", 160, 50, 0.7);
     addSpring(scene, 1960, GROUND_TOP - 12);
     addPlatform(scene, 2020, 220, 360, GROUND_TOP + 32 - 220, "cliff");
-    addMovingPlatform(scene, 2500, 250, 104, 2460, 2800, 55);
-    addFlyer(scene, 2650, 160, "bird", 120, 40, 1.6);
+    addMovingPlatform(scene, 2500, 250, 128, 2460, 2820, 35);
+    addFlyer(scene, 2650, 160, "bird", 140, 40, 1.0);
     addGround(scene, 2900, 350, "cliff");
     addBramble(scene, 3100, GROUND_TOP - 20);
     var stairs = addStaircase(scene, 3250, 4, 56, 28, 360);
@@ -1743,7 +1744,7 @@
     addGround(scene, 1020, 520, "cavefloor");
     addPlatform(scene, 1180, 300, 120, 20, "cavefloor");
     addCrystal(scene, 1240, 300);
-    addWalker(scene, 1400, GROUND_TOP - 16, "crab", 95, 30, 18, 5, 9);
+    addWalker(scene, 1400, GROUND_TOP - 16, "crab", 62, 30, 18, 5, 9);
     addGround(scene, 1540, 880, "cavefloor");
     addWaterZone(scene, 1640, 230, 660, WORLD_HEIGHT - 230);
     addJelly(scene, 1900, 372, 60);
@@ -1752,12 +1753,12 @@
     addCrystal(scene, 1980, GROUND_TOP);
     addPlatform(scene, 2300, 330, 120, GROUND_TOP + 32 - 330, "rock");
     addGround(scene, 2420, 480, "cavefloor");
-    addWalker(scene, 2620, GROUND_TOP - 16, "crab", 105, 30, 18, 5, 9);
+    addWalker(scene, 2620, GROUND_TOP - 16, "crab", 68, 30, 18, 5, 9);
     addCrystal(scene, 2700, GROUND_TOP);
-    addCrumble(scene, 2935, 360, 80);
-    addCrumble(scene, 3050, 340, 80);
-    addGround(scene, 3160, 640, "cavefloor");
-    addFlyer(scene, 3400, 300, "bat", 110, 40, 1.5);
+    addCrumble(scene, 2900, 360, 110);
+    addCrumble(scene, 3040, 340, 110);
+    addGround(scene, 3140, 660, "cavefloor");
+    addFlyer(scene, 3400, 300, "bat", 130, 40, 0.95);
     addCrystal(scene, 3550, GROUND_TOP);
     addFlag(scene, 3700, GROUND_TOP);
     scene.worldWidth = 3800;
@@ -1771,20 +1772,20 @@
   function buildLevel8(scene) {
     scene.waterZones = [];
     addGround(scene, 0, 600, "snow");
-    addWalker(scene, 420, GROUND_TOP - 18, "waddler", 60, 22, 28, 5, 5);
+    addWalker(scene, 420, GROUND_TOP - 18, "waddler", 40, 22, 28, 5, 5);
     addIce(scene, 600, GROUND_TOP, 600, 32);
-    addWalker(scene, 900, GROUND_TOP - 18, "waddler", 70, 22, 28, 5, 5);
-    var ball = addWalker(scene, 1100, GROUND_TOP - 16, "snowball", 120, 26, 26, 2, 2);
+    addWalker(scene, 900, GROUND_TOP - 18, "waddler", 46, 22, 28, 5, 5);
+    var ball = addWalker(scene, 1100, GROUND_TOP - 16, "snowball", 78, 26, 26, 2, 2);
     ball.rolls = true;
-    addIce(scene, 1320, 340, 140, 24);
-    addIce(scene, 1540, 300, 140, 24);
-    addIce(scene, 1760, 340, 140, 24);
+    addIce(scene, 1320, 340, 180, 24);
+    addIce(scene, 1540, 300, 180, 24);
+    addIce(scene, 1760, 340, 180, 24);
     addGround(scene, 1980, 620, "snow");
     addBramble(scene, 2200, GROUND_TOP - 20);
     addSpring(scene, 2450, GROUND_TOP - 12);
-    addMovingPlatform(scene, 2700, 300, 104, 2660, 2900, 50);
+    addMovingPlatform(scene, 2700, 300, 128, 2660, 2920, 32);
     addIce(scene, 3000, GROUND_TOP, 300, 32);
-    var ball2 = addWalker(scene, 3150, GROUND_TOP - 16, "snowball", 130, 26, 26, 2, 2);
+    var ball2 = addWalker(scene, 3150, GROUND_TOP - 16, "snowball", 85, 26, 26, 2, 2);
     ball2.rolls = true;
     var stairs = addStaircase(scene, 3300, 4, 56, 28, 360);
     addFlag(scene, stairs.landingX + stairs.landingW - 80, stairs.landingTop);
@@ -1799,30 +1800,30 @@
   // ---------- Level 9: Volcano (lava, rising/sinking platforms, fireballs) ----------
   function buildLevel9(scene) {
     scene.waterZones = [];
-    addGround(scene, 0, 600, "basalt");
-    addLava(scene, 600, 500);
-    addLift(scene, 690, 280, 380, 96, 50);
-    addLift(scene, 850, 240, 360, 96, 60);
-    addLift(scene, 1010, 270, 370, 96, 45);
-    addFireball(scene, 770, 412, 200, 2600, 0);
-    addFireball(scene, 930, 412, 230, 3000, 1.3);
-    addGround(scene, 1100, 500, "basalt");
+    addGround(scene, 0, 640, "basalt");
+    addLava(scene, 640, 420);
+    addLift(scene, 700, 280, 380, 120, 32);
+    addLift(scene, 860, 240, 360, 120, 38);
+    addLift(scene, 1020, 270, 370, 120, 30);
+    addFireball(scene, 780, 412, 170, 3800, 0);
+    addFireball(scene, 940, 412, 180, 4200, 1.3);
+    addGround(scene, 1060, 560, "basalt");
     addBramble(scene, 1300, GROUND_TOP - 20);
-    addWalker(scene, 1450, GROUND_TOP - 16, "crab", 110, 30, 18, 5, 9);
-    addLava(scene, 1600, 700);
-    addMovingPlatform(scene, 1760, 330, 104, 1700, 1950, 60);
-    addLift(scene, 2140, 260, 370, 96, 55);
-    addFireball(scene, 1880, 412, 220, 2800, 0.6);
-    addFireball(scene, 2240, 412, 200, 2400, 2.0);
-    addGround(scene, 2300, 500, "basalt");
+    addWalker(scene, 1450, GROUND_TOP - 16, "crab", 72, 30, 18, 5, 9);
+    addLava(scene, 1680, 560);
+    addMovingPlatform(scene, 1780, 330, 128, 1720, 1980, 38);
+    addLift(scene, 2140, 260, 370, 120, 34);
+    addFireball(scene, 1880, 412, 170, 4000, 0.6);
+    addFireball(scene, 2220, 412, 160, 3800, 2.0);
+    addGround(scene, 2240, 540, "basalt");
     addBramble(scene, 2550, GROUND_TOP - 20);
-    addLava(scene, 2800, 400);
-    addCrumble(scene, 2840, 360, 90);
-    addCrumble(scene, 2975, 340, 90);
-    addCrumble(scene, 3105, 360, 90);
-    addFireball(scene, 3030, 412, 210, 2700, 1.0);
-    addGround(scene, 3200, 350, "basalt");
-    addFlyer(scene, 3450, 300, "bat", 120, 40, 1.6);
+    addLava(scene, 2780, 340);
+    addCrumble(scene, 2820, 360, 120);
+    addCrumble(scene, 2970, 340, 120);
+    addCrumble(scene, 3110, 360, 120);
+    addFireball(scene, 3030, 412, 160, 4000, 1.0);
+    addGround(scene, 3180, 370, "basalt");
+    addFlyer(scene, 3450, 300, "bat", 140, 40, 1.0);
     var stairs = addStaircase(scene, 3550, 4, 56, 28, 360);
     addFlag(scene, stairs.landingX + stairs.landingW - 80, stairs.landingTop);
     scene.worldWidth = stairs.landingX + stairs.landingW + 80;
@@ -1883,6 +1884,7 @@
       this.darkness = null;
       this.lives = START_LIVES;
       this.invulnUntil = 0;
+      this.coyoteUntil = 0;
       this.touchLeft = false;
       this.touchRight = false;
       this.touchJump = false;
@@ -1949,11 +1951,11 @@
       this.sharkFins = false;
       var startShark = this.isInWater(this.player.x, this.player.y);
       if (startShark) {
-        this.player.body.setSize(36, 22);
-        this.player.body.setOffset(14, 10);
+        this.player.body.setSize(30, 18);
+        this.player.body.setOffset(17, 12);
       } else {
-        this.player.body.setSize(22, 36);
-        this.player.body.setOffset(5, 10);
+        this.player.body.setSize(18, 32);
+        this.player.body.setOffset(7, 12);
       }
       this.setForm(startShark ? "shark" : "kid", true);
 
@@ -1973,7 +1975,7 @@
         this.ropeGfx = this.add.graphics().setDepth(4);
       }
       if (this.cannons.length) {
-        this.time.addEvent({ delay: 2200, loop: true, callback: this.fireCannons, callbackScope: this });
+        this.time.addEvent({ delay: 3400, loop: true, callback: this.fireCannons, callbackScope: this });
       }
       if (this.darkLevel) {
         this.darkness = this.add.image(this.player.x, this.player.y, "darkness").setDepth(15);
@@ -2135,11 +2137,11 @@
       this.form = null;
       var startShark = this.isInWater(PLAYER_START_X, PLAYER_START_Y);
       if (startShark) {
-        this.player.body.setSize(36, 22);
-        this.player.body.setOffset(14, 10);
+        this.player.body.setSize(30, 18);
+        this.player.body.setOffset(17, 12);
       } else {
-        this.player.body.setSize(22, 36);
-        this.player.body.setOffset(5, 10);
+        this.player.body.setSize(18, 32);
+        this.player.body.setOffset(7, 12);
       }
       this.setForm(startShark ? "shark" : "kid", true);
       this.player.setVelocity(0, 0);
@@ -2183,7 +2185,7 @@
         return;
       }
       if (plat.isIce) {
-        this.iceUntil = this.time.now + 120;
+        this.iceUntil = this.time.now + 80;
       }
       if (plat.isCrumble && !plat.crumbling) {
         this.startCrumble(plat);
@@ -2194,7 +2196,7 @@
       var scene = this;
       plat.crumbling = true;
       this.tweens.add({ targets: plat, x: plat.homeX + 2, duration: 50, yoyo: true, repeat: 4 });
-      this.time.delayedCall(520, function () {
+      this.time.delayedCall(1100, function () {
         if (!plat.body) {
           return;
         }
@@ -2234,7 +2236,7 @@
         }
         var ball = this.hazards.create(c.x, c.y, "cannonball");
         ball.body.setCircle(8, 1, 1);
-        ball.setVelocityX(c.dir * 190);
+        ball.setVelocityX(c.dir * 120);
         ball.life = this.time.now + 6000;
         ball.setDepth(7);
       }
@@ -2340,10 +2342,10 @@
       b.setCollideWorldBounds(true);
       this.physics.add.collider(b, this.platforms);
       this.boss = b;
-      this.bossHp = 5;
-      this.bossMaxHp = 5;
+      this.bossHp = 3;
+      this.bossMaxHp = 3;
       this.bossState = "walk";
-      this.bossTimer = this.time.now + 3200;
+      this.bossTimer = this.time.now + 4500;
       this.bossDir = -1;
       this.bossInvuln = 0;
       this.bossSlamAt = 0;
@@ -2392,7 +2394,7 @@
         b.setVelocityX(0);
         return;
       }
-      var speed = 80 + (this.bossMaxHp - this.bossHp) * 22;
+      var speed = 50 + (this.bossMaxHp - this.bossHp) * 14;
       if (this.bossState === "walk") {
         if (b.x < 150) {
           this.bossDir = 1;
@@ -2412,7 +2414,7 @@
           this.spawnShockwaves(b);
           this.cameras.main.shake(220, 0.01);
           this.bossState = "tired";
-          this.bossTimer = time + 2400;
+          this.bossTimer = time + 4000;
           this.bossCore.setVisible(true);
           b.setTint(0xb8c4ff);
         }
@@ -2427,7 +2429,7 @@
 
     bossWake(time) {
       this.bossState = "walk";
-      this.bossTimer = time + 3000;
+      this.bossTimer = time + 4200;
       this.bossCore.setVisible(false);
       this.boss.clearTint();
       this.bossDir = this.player.x < this.boss.x ? -1 : 1;
@@ -2438,7 +2440,7 @@
       var i;
       for (i = 0; i < dirs.length; i++) {
         var r = this.hazards.create(b.x + dirs[i] * 70, GROUND_TOP - 7, "rivet");
-        r.setVelocityX(dirs[i] * 230);
+        r.setVelocityX(dirs[i] * 150);
         r.life = this.time.now + 4000;
         r.setDepth(7);
       }
@@ -2452,7 +2454,7 @@
       if (now < this.bossInvuln) {
         return;
       }
-      var fromAbove = player.body.velocity.y > 40 && player.body.bottom <= b.body.top + 24;
+      var fromAbove = player.body.velocity.y > 12 && player.body.bottom <= b.body.top + 36;
       if (fromAbove && this.bossState === "tired") {
         this.bossHp -= 1;
         this.bossInvuln = now + 700;
@@ -2611,14 +2613,19 @@
       if (this.won || this.completing || this.restarting || !jelly.active) {
         return;
       }
-      this.loseLife();
+      // Harmless scenery: a gentle bounce, no life lost
+      var push = player.x >= jelly.x ? 90 : -90;
+      player.setVelocityX(push);
+      if (player.body.velocity.y > -40) {
+        player.setVelocityY(-200);
+      }
     }
 
     hitEnemy(player, enemy) {
       if (this.won || this.completing || this.restarting || !enemy.active) {
         return;
       }
-      var stomping = player.body.velocity.y > 40 && player.body.center.y < enemy.body.center.y;
+      var stomping = player.body.velocity.y > 12 && player.body.bottom <= enemy.body.center.y + 14;
       if (stomping) {
         enemy.disableBody(true, true);
         player.setVelocityY(-280);
@@ -2760,12 +2767,12 @@
       }
       if (previous) {
         if (form === "shark") {
-          this.player.body.setSize(36, 22);
-          this.player.body.setOffset(14, 10);
+          this.player.body.setSize(30, 18);
+          this.player.body.setOffset(17, 12);
           this.player.y += 10;
         } else {
-          this.player.body.setSize(22, 36);
-          this.player.body.setOffset(5, 10);
+          this.player.body.setSize(18, 32);
+          this.player.body.setOffset(7, 12);
           this.player.y -= 10;
         }
       }
@@ -2917,6 +2924,10 @@
       var right = this.cursors.right.isDown || this.keyD.isDown || this.touchRight || !!pad.right;
       var jump = this.cursors.up.isDown || this.keyW.isDown || this.keySpace.isDown || this.touchJump || !!pad.jump;
       var onGround = this.player.body.blocked.down || this.player.body.touching.down;
+      if (onGround) {
+        this.coyoteUntil = this.time.now + COYOTE_MS;
+      }
+      var canJump = onGround || (this.time.now < this.coyoteUntil && this.player.body.velocity.y >= -20);
       var moveSpeed = this.underwater ? WATER_MOVE_SPEED : MOVE_SPEED;
       var jumpVel = this.underwater ? WATER_JUMP_VELOCITY : JUMP_VELOCITY;
 
@@ -2932,14 +2943,15 @@
       if (this.time.now < this.iceUntil) {
         // Slippery: speed changes slowly, so you slide
         var cur = this.player.body.velocity.x;
-        var f = 1 - Math.pow(0.955, dt / 16.7);
+        var f = 1 - Math.pow(0.88, dt / 16.7);
         this.player.setVelocityX(cur + (targetVx - cur) * f + push);
       } else {
         this.player.setVelocityX(targetVx + push);
       }
 
-      if (jump && onGround) {
+      if (jump && canJump) {
         this.player.setVelocityY(jumpVel);
+        this.coyoteUntil = 0;
       }
     }
   }
